@@ -20,5 +20,7 @@ Please post issues or pull requests if you found mistakes in this project. Thank
 15. **Bit Fiddling**
 16. **The C Preprocessor and the C Library**
 17. **Advanced Data Representation**
+
 Finally it's finished :)
-Acknowledgement: DragonDavion~mua~
+
+Acknowledgement: DragonDavion~ mua~
