@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "List_17_10_tree.h"
+#include "Exer_17_8_tree.h"
 
 typedef struct pair {
     Trnode * parent;
@@ -58,29 +58,35 @@ bool AddItem(const Item * pi, Tree * ptree)
         fprintf(stderr, "Tree is full\n");
         return false;
     }
-    if (SeekItem(pi, ptree).child != NULL)
-    {
-        fprintf(stderr, "Attempted to add duplicate item\n");
-    }
-    new_node = MakeNode(pi);
-    if (new_node == NULL)
-    {
-        fprintf(stderr, "Couldn't create node\n");
-        return false;
-    }
+    Item *res;
     ptree->size++;
-
-    if (ptree->root == NULL)
-        ptree->root = new_node;
+    if ((SeekItem(pi, ptree).child) != NULL)
+    {
+        res = &(SeekItem(pi, ptree).child->item);
+        strcpy(res->petkind[res->count], pi->petkind[0]);
+        res->count++;
+    }
     else
-        AddNode(new_node, ptree->root);
+    {    
+        new_node = MakeNode(pi);
+        if (new_node == NULL)
+        {
+            fprintf(stderr, "Couldn't create node\n");
+            return false;
+        }
+        new_node->item.count++;
+        if (ptree->root == NULL)
+            ptree->root = new_node;
+        else
+            AddNode(new_node, ptree->root);
+    }
     return true;
 }
 
 
-bool InTree(const Item * pi, const Tree * ptree)
+Trnode * InTree(const Item * pi, const Tree * ptree)
 {
-    return (SeekItem(pi, ptree).child == NULL) ? false : true;
+    return SeekItem(pi, ptree).child;
 }
 
 bool DeleteItem(const Item * pi, Tree * ptree)
@@ -110,7 +116,7 @@ void Traverse(const Tree * ptree, void(*pfun)(Item item))
 void DeleteAll(Tree * ptree)
 {
     if (ptree != NULL)
-        DeleteAllnodes(ptree->root);
+        DeleteAllNodes(ptree->root);
     ptree->root = NULL;
     ptree->size = 0;
 }
@@ -156,8 +162,9 @@ static void AddNode(Trnode * new_node, Trnode * root)
     }
     else
     {
-        fprintf(stderr, "location error in AddNode()\n");
-        exit(1);
+        Item temp = root->item;
+        strcpy(temp.petkind[temp.count], new_node->item.petkind[0]);
+        root->item = temp;
     }
 }
 
@@ -165,8 +172,6 @@ static bool ToLeft(const Item * i1, const Item * i2)
 {
     int comp1;
     if ((comp1 = strcmp(i1->petname, i2->petname)) < 0)
-        return true;
-    else if (comp1 == 0 && strcmp(i1->petkind, i2->petkind) < 0)
         return true;
     else
         return false;
@@ -176,9 +181,6 @@ static bool ToRight(const Item * i1, const Item * i2)
 {
     int comp1;
     if ((comp1 = strcmp(i1->petname, i2->petname)) > 0)
-        return true;
-    else if (comp1 == 0 &&
-        strcmp(i1->petkind, i2->petkind) > 0)
         return true;
     else
         return false;
@@ -203,10 +205,8 @@ static Pair SeekItem(const Item * pi, const Tree * ptree)
     Pair look;
     look.parent = NULL;
     look.child = ptree->root;
-
     if (look.child == NULL)
         return look;
-    
     while (look.child != NULL)
     {
         if (ToLeft(pi, &(look.child->item)))

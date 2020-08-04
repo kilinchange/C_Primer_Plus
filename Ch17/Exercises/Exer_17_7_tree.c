@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "List_17_10_tree.h"
+#include "Exer_17_7_tree.h"
 
 typedef struct pair {
     Trnode * parent;
@@ -78,12 +78,13 @@ bool AddItem(const Item * pi, Tree * ptree)
 }
 
 
-bool InTree(const Item * pi, const Tree * ptree)
+Item * InTree(const Item * pi, const Tree * ptree)
 {
-    return (SeekItem(pi, ptree).child == NULL) ? false : true;
+    Pair res = SeekItem(pi, ptree);
+    return (res.child == NULL) ? NULL : &(res.child->item);
 }
 
-bool DeleteItem(const Item * pi, Tree * ptree)
+bool Deleteitem(const Item * pi, Tree * ptree)
 {
     Pair look;
 
@@ -107,10 +108,10 @@ void Traverse(const Tree * ptree, void(*pfun)(Item item))
         InOrder(ptree->root, pfun);
 }
 
-void DeleteAll(Tree * ptree)
+void Deleteall(Tree * ptree)
 {
     if (ptree != NULL)
-        DeleteAllnodes(ptree->root);
+        DeleteAllNodes(ptree->root);
     ptree->root = NULL;
     ptree->size = 0;
 }
@@ -164,9 +165,7 @@ static void AddNode(Trnode * new_node, Trnode * root)
 static bool ToLeft(const Item * i1, const Item * i2)
 {
     int comp1;
-    if ((comp1 = strcmp(i1->petname, i2->petname)) < 0)
-        return true;
-    else if (comp1 == 0 && strcmp(i1->petkind, i2->petkind) < 0)
+    if ((comp1 = strcmp(i1->word, i2->word)) < 0)
         return true;
     else
         return false;
@@ -175,10 +174,7 @@ static bool ToLeft(const Item * i1, const Item * i2)
 static bool ToRight(const Item * i1, const Item * i2)
 {
     int comp1;
-    if ((comp1 = strcmp(i1->petname, i2->petname)) > 0)
-        return true;
-    else if (comp1 == 0 &&
-        strcmp(i1->petkind, i2->petkind) > 0)
+    if ((comp1 = strcmp(i1->word, i2->word)) > 0)
         return true;
     else
         return false;

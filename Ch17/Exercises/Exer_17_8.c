@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include "List_17_10_tree.h"
+#include "Exer_17_8_tree.h"
 
 char menu(void);
 void addpet(Tree * pt);
@@ -70,6 +70,7 @@ char menu(void)
 void addpet(Tree * pt)
 {
     Item temp;
+    temp.count = 0;
 
     if (TreeIsFull(pt))
         puts("No room in the club!");
@@ -77,9 +78,10 @@ void addpet(Tree * pt)
     {
         puts("Please enter name of pet:");
         s_gets(temp.petname, SLEN);
+        uppercase(temp.petname);
         puts("Please enter pet kind:");
-        s_gets(temp.petkind, SLEN);
-        uppercase(temp.petkind);
+        s_gets(temp.petkind[0], SLEN);
+        uppercase(temp.petkind[0]);
         AddItem(&temp, pt);
     }
 }
@@ -94,7 +96,10 @@ void showpets(const Tree * pt)
 
 void printitem(Item item)
 {
-    printf("Pet: %-19s Kind: %-19s\n", item.petname, item.petkind);
+    printf("Pet: %-19s Kind: ", item.petname);
+    for (int i = 0; i < item.count; i++)
+        printf("%-10s ", item.petkind[i]);
+    printf("\n");
 }
 
 void findpet(const Tree * pt)
@@ -109,13 +114,14 @@ void findpet(const Tree * pt)
 
     puts("Please enter name of pet you wish to find:");
     s_gets(temp.petname, SLEN);
-    puts("Please enter pet kind:");
-    s_gets(temp.petkind, SLEN);
     uppercase(temp.petname);
-    uppercase(temp.petkind);
-    printf("%s the %s ", temp.petname, temp.petkind);
-    if (InTree(&temp, pt))
+    printf("%s ", temp.petname);
+    Trnode * node;
+    if ((node = InTree(&temp, pt)) != NULL)
+    {
         printf("is a member.\n");
+        printitem(node->item);
+    }
     else
         printf("is not a member.\n");
 }
@@ -132,10 +138,10 @@ void droppet(Tree * pt)
     puts("Please enter name of pet you wish to delete:");
     s_gets(temp.petname, SLEN);
     puts("Please enter pet kind:");
-    s_gets(temp.petkind, SLEN);
+    s_gets(temp.petkind[0], SLEN);
     uppercase(temp.petname);
-    uppercase(temp.petkind);
-    printf("%s the %s ", temp.petname, temp.petkind);
+    uppercase(temp.petkind[0]);
+    printf("%s the %s ", temp.petname, temp.petkind[0]);
     if (DeleteItem(&temp, pt))    
         printf("is dropped from the club.\n");
     else 
